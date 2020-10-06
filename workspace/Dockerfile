@@ -1421,7 +1421,7 @@ RUN set -xe; php -v | head -n 1 | grep -q "PHP ${LARADOCK_PHP_VERSION}."
 
 USER root
 
-#COPY ./zshrc.zshrc /home/laradock/.zshrc
+COPY ./zshrc.zshrc /home/laradock/.zshrc
 
 ARG SHELL_OH_MY_ZSH=false
 RUN if [ ${SHELL_OH_MY_ZSH} = true ]; then \

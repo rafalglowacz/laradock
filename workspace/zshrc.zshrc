@@ -1,3 +1,7 @@
+TERM=xterm-256color
+ZSH_AUTOSUGGEST_USE_ASYNC=1
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+ZSH_AUTOSUGGEST_BUFFER_MAX_SIZE=20
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:/usr/local/bin:$PATH
 
@@ -66,9 +70,9 @@ ZSH_THEME="candy"
 # Which plugins would you like to load?
 # Standard plugins can be found in $ZSH/plugins/
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
+# Example format: plugins=(zsh-autosuggestions rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(laravel5 zsh-autosuggestions)
+plugins=(zsh-autosuggestions laravel5)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -109,3 +113,11 @@ bindkey "^[[4~" end-of-line
 bindkey "^[[5~" up-line-or-history
 bindkey "^[[6~" down-line-or-history
 bindkey "^?" backward-delete-char
+
+
+# Load Custom Aliases
+source /home/laradock/aliases.sh
+
+
+# Load Custom Aliases
+source ~/aliases.sh
