@@ -1,0 +1,103 @@
+#! /bin/bash
+
+# NOTE: At the moment, this has only been confirmed to work with PHP 7
+
+
+# Grab full name of the container
+CONTAINER=$(docker-compose ps -q workspace)
+
+# Grab PHP major and minor version, e.g. 7.4
+PHP_VERSION=$(docker exec $CONTAINER php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;')
+
+# Grab OS type
+if [[ "$(uname)" == "Darwin" ]]; then
+    OS_TYPE="OSX"
+else
+    OS_TYPE=$(expr substr $(uname -s) 1 5)
+fi
+
+
+xdebug_status ()
+{
+    echo 'xDebug status'
+
+    # If running on Windows, need to prepend with winpty :(
+    if [[ $OS_TYPE == "MINGW" ]]; then
+        winpty docker exec -it $CONTAINER bash -c 'php -v'
+
+    else
+        docker exec -it $CONTAINER bash -c 'php -v'
+    fi
+
+}
+
+
+xdebug_start ()
+{
+    echo 'Start xDebug'
+
+    # And uncomment line with xdebug extension, thus enabling it
+    ON_CMD="sed -i 's/^;zend_extension=/zend_extension=/g' \
+                    /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini"
+
+
+    # If running on Windows, need to prepend with winpty :(
+    if [[ $OS_TYPE == "MINGW" ]]; then
+        winpty docker exec -it $CONTAINER bash -c "${ON_CMD}"
+        docker restart $CONTAINER
+        winpty docker exec -it $CONTAINER bash -c 'php -v'
+
+    else
+        docker exec -it $CONTAINER bash -c "${ON_CMD}"
+        docker restart $CONTAINER
+        docker exec -it $CONTAINER bash -c 'php -v'
+    fi
+}
+
+
+xdebug_stop ()
+{
+    echo 'Stop xDebug'
+
+    # Comment out xdebug extension line
+    OFF_CMD="sed -i 's/^zend_extension=/;zend_extension=/g' /etc/php/${PHP_VERSION}/cli/conf.d/20-xdebug.ini"
+
+
+    # If running on Windows, need to prepend with winpty :(
+    if [[ $OS_TYPE == "MINGW" ]]; then
+        # This is the equivalent of:
+        # winpty docker exec -it laradock_workspace_1 bash -c 'bla bla bla'
+        # Thanks to @michaelarnauts at https://github.com/docker/compose/issues/593
+        winpty docker exec -it $CONTAINER bash -c "${OFF_CMD}"
+        docker restart $CONTAINER
+        #docker-compose restart workspace
+        winpty docker exec -it $CONTAINER bash -c 'php -v'
+
+    else
+        docker exec -it $CONTAINER bash -c "${OFF_CMD}"
+        # docker-compose restart workspace
+        docker restart $CONTAINER
+        docker exec -it $CONTAINER bash -c 'php -v'
+    fi
+}
+
+
+case $@ in
+    stop|STOP)
+        xdebug_stop
+        ;;
+    start|START)
+        xdebug_start
+        ;;
+    status|STATUS)
+        xdebug_status
+        ;;
+    *)
+        echo "xDebug [Stop | Start | Status] in the ${CONTAINER} container."
+        echo "xDebug must have already been installed."
+        echo "Usage:"
+        echo "  .workspace/xdebug stop|start|status"
+
+esac
+
+exit 1
