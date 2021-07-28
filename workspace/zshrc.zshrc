@@ -78,6 +78,10 @@ source $ZSH/oh-my-zsh.sh
 
 # User configuration
 
+# Change color of the prompt to easily distinguish container terminals from host terminals
+export PS1='%{$fg_bold[yellow]%}%n@%m %{$fg[blue]%}%D{[%X]} %{$reset_color%}%{$fg[white]%}[%~]%{$reset_color%} $(git_prompt_info)
+%{$fg[blue]%}->%{$fg_bold[blue]%} %#%{$reset_color%} '
+
 # export MANPATH="/usr/local/man:$MANPATH"
 
 # You may need to manually set your language environment
