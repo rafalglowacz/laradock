@@ -170,6 +170,7 @@ services:
           - PROTOC_VERSION=${WORKSPACE_PROTOC_VERSION}
           - INSTALL_DOCKER_CLIENT=${WORKSPACE_INSTALL_DOCKER_CLIENT}
           - INSTALL_MEMCACHED=${WORKSPACE_INSTALL_MEMCACHED}
+          - INSTALL_TMUX=${WORKSPACE_INSTALL_TMUX}
           - http_proxy
           - https_proxy
           - no_proxy
@@ -177,6 +178,7 @@ services:
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
         - docker-in-docker:/certs/client
         - ./php-worker/supervisord.d:/etc/supervisord.d
+        - $SSH_AUTH_SOCK:/ssh-agent
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
       ports:
@@ -193,6 +195,7 @@ services:
         - DOCKER_TLS_VERIFY=1
         - DOCKER_TLS_CERTDIR=/certs
         - DOCKER_CERT_PATH=/certs/client
+        - SSH_AUTH_SOCK=/ssh-agent
       networks:
         - frontend
         - backend

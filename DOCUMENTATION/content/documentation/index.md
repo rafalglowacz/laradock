@@ -2519,3 +2519,16 @@ Moving from Docker Toolbox (VirtualBox) to Docker Native (for Mac/Windows). Requ
 **Note:** If you face any problem with the last step above: rebuild all your containers
 `docker-compose build --no-cache`
 "Warning Containers Data might be lost!"
+
+## SSH agent forwarding
+
+In docker-compose.yml we forward SSH agent to the workspace container like this:
+
+```yaml
+volumes:
+  - $SSH_AUTH_SOCK:/ssh-agent
+environment:
+  - SSH_AUTH_SOCK=/ssh-agent
+```
+
+This is an alternative to mounting ~/.ssh in the container. Note that with this solution you'll get an error in the container if you try using SSH before the key you need is added to the agent on the host. So when that happens, you have to switch to the host, add the key and then switch back to the container - the key will work from that point on. You can put `AddKeysToAgent yes` in ~/.ssh/config on the host so that keys used in SSH operations are automatically added to agent when used. So for instance when using keys with a Git repository, it can be as easy as running `git fetch` on the host once and then the key will be available both on the host and in the container until the next reboot. 
