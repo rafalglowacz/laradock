@@ -178,11 +178,14 @@ services:
         - ${APP_CODE_PATH_HOST}:${APP_CODE_PATH_CONTAINER}${APP_CODE_CONTAINER_FLAG}
         - docker-in-docker:/certs/client
         - ./php-worker/supervisord.d:/etc/supervisord.d
-        - $SSH_AUTH_SOCK:/ssh-agent
+        - ~/.ssh:/home/laradock/.ssh
       extra_hosts:
         - "dockerhost:${DOCKER_HOST_IP}"
       ports:
         - "${WORKSPACE_SSH_PORT}:22"
+        - "3005:3005"
+        - "3003:3003"
+        - "8080:8080"
 #        - "${WORKSPACE_BROWSERSYNC_HOST_PORT}:3000"
 #        - "${WORKSPACE_BROWSERSYNC_UI_HOST_PORT}:3001"
 #        - "${WORKSPACE_VUE_CLI_SERVE_HOST_PORT}:8080"
@@ -195,7 +198,6 @@ services:
         - DOCKER_TLS_VERIFY=1
         - DOCKER_TLS_CERTDIR=/certs
         - DOCKER_CERT_PATH=/certs/client
-        - SSH_AUTH_SOCK=/ssh-agent
       networks:
         - frontend
         - backend
