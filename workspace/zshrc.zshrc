@@ -105,23 +105,3 @@ export PS1='%{$fg_bold[yellow]%}%n@%m %{$fg[blue]%}%D{[%X]} %{$reset_color%}%{$f
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-
-bindkey "^[OB" down-line-or-search
-bindkey "^[OC" forward-char
-bindkey "^[OD" backward-char
-bindkey "^[OF" end-of-line
-bindkey "^[OH" beginning-of-line
-bindkey "^[[1~" beginning-of-line
-bindkey "^[[3~" delete-char
-bindkey "^[[4~" end-of-line
-bindkey "^[[5~" up-line-or-history
-bindkey "^[[6~" down-line-or-history
-bindkey "^?" backward-delete-char
-
-
-# Load Custom Aliases
-source /home/laradock/aliases.sh
-
-
-# Load Custom Aliases
-source ~/aliases.sh
