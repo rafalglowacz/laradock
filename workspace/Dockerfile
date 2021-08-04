@@ -1667,6 +1667,10 @@ RUN if [ ${INSTALL_TMUX} = true ]; then \
 #--------------------------------------------------------------------------
 #
 
+USER laradock
+
+ADD .gitconfig /home/laradock/.gitconfig
+
 USER root
 
 # Clean up
