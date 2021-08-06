@@ -1530,8 +1530,6 @@ RUN set -xe; php -v | head -n 1 | grep -q "PHP ${LARADOCK_PHP_VERSION}."
 
 USER root
 
-COPY ./zshrc.zshrc /home/laradock/.zshrc
-
 ARG SHELL_OH_MY_ZSH=false
 RUN if [ ${SHELL_OH_MY_ZSH} = true ]; then \
     apt install -y zsh \
@@ -1571,6 +1569,9 @@ bindkey "^?" backward-delete-char\n' >> /home/laradock/.zshrc && \
     echo "" >> /home/laradock/.zshrc \
   ;fi \
 ;fi
+
+RUN sed -i '1iif [ -f ~/shell-customizations/zshrc.zshrc ]; then source ~/shell-customizations/zshrc.zshrc; return; fi\n' \
+  /home/laradock/.zshrc
 
 USER root
 
