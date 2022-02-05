@@ -631,7 +631,7 @@ services:
       build:
         context: ./postgres-postgis
         args:
-          - POSTGRES_VERSION=${POSTGRES_VERSION}   
+          - POSTGIS_VERSION=${POSTGIS_VERSION}   
           - INSTALL_PGSQL_HTTP_FOR_POSTGIS13=${POSTGIS_INSTALL_PGSQL_HTTP_FOR_POSTGIS13}
       volumes:
         - ${DATA_PATH_HOST}/postgres:/var/lib/postgresql/data
@@ -1001,7 +1001,7 @@ services:
     meilisearch:
       image: getmeili/meilisearch:latest
       volumes:
-        - ${DATA_PATH_HOST}/meilisearch:/var/lib/meilisearch
+        - ${DATA_PATH_HOST}/meilisearch:/data.ms
       ports:
         - "${MEILISEARCH_HOST_PORT}:7700"
       networks:
@@ -1522,7 +1522,7 @@ services:
 
 ### Docker-in-Docker ################################################
     docker-in-docker:
-      image: docker:19.03-dind
+      image: docker:20.10-dind
       environment:
         DOCKER_TLS_SAN: DNS:docker-in-docker
       privileged: true
