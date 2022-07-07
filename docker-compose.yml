@@ -54,11 +54,12 @@ volumes:
     driver: ${VOLUMES_DRIVER}
   react:
     driver: ${VOLUMES_DRIVER}
+  app-code-mutagen:
 
 services:
 
 ### Workspace Utilities ##################################
-    workspace:
+    workspace: &workspace
       build:
         context: ./workspace
         args:
@@ -208,8 +209,13 @@ services:
       links:
         - docker-in-docker
 
+    workspace-mutagen:
+      <<: *workspace
+      volumes:
+        - app-code-mutagen:${APP_CODE_PATH_CONTAINER}
+
 ### PHP-FPM ##############################################
-    php-fpm:
+    php-fpm: &php-fpm
       build:
         context: ./php-fpm
         args:
@@ -316,6 +322,14 @@ services:
       links:
         - docker-in-docker
 
+    php-fpm-mutagen:
+      <<: *php-fpm
+      volumes:
+        - ./php-fpm/php${PHP_VERSION}.ini:/usr/local/etc/php/php.ini
+        - app-code-mutagen:${APP_CODE_PATH_CONTAINER}
+      depends_on:
+        - workspace-mutagen
+
 ### PHP Worker ############################################
     php-worker:
       build:
@@ -403,7 +417,7 @@ services:
         - backend
 
 ### NGINX Server #########################################
-    nginx:
+    nginx: &nginx
       build:
         context: ./nginx
         args:
@@ -427,6 +441,25 @@ services:
       networks:
         - frontend
         - backend
+
+    nginx-mutagen:
+      <<: *nginx
+      build:
+        context: ./nginx
+        args:
+          - CHANGE_SOURCE=${CHANGE_SOURCE}
+          - PHP_UPSTREAM_CONTAINER=php-fpm-mutagen
+          - PHP_UPSTREAM_PORT=${NGINX_PHP_UPSTREAM_PORT}
+          - http_proxy
+          - https_proxy
+          - no_proxy
+      volumes:
+        - app-code-mutagen:${APP_CODE_PATH_CONTAINER}
+        - ${NGINX_HOST_LOG_PATH}:/var/log/nginx
+        - ${NGINX_SITES_PATH}:/etc/nginx/sites-available
+        - ${NGINX_SSL_PATH}:/etc/nginx/ssl
+      depends_on:
+        - php-fpm-mutagen
 
 ### OpenResty Server #########################################
     openresty:
@@ -2064,3 +2097,18 @@ services:
         - ${TARANTOOL_ADMIN_PORT}:80
       networks:
         - backend
+
+x-mutagen:
+  sync:
+    defaults:
+      ignore:
+        vcs: true
+        paths:
+          - "/*"
+          - "!/laravel/"
+      permissions:
+        defaultFileMode: 0o666
+        defaultDirectoryMode: 0o777
+    app-code-mutagen:
+      alpha: "${APP_CODE_PATH_HOST}"
+      beta: "volume://app-code-mutagen"

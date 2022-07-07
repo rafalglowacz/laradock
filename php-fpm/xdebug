@@ -4,7 +4,7 @@
 
 
 # Grab full name of php-fpm container
-PHP_FPM_CONTAINER=$(docker-compose ps -q php-fpm)
+PHP_FPM_CONTAINER=$(docker-compose ps -q php-fpm) || PHP_FPM_CONTAINER=$(docker-compose ps -q php-fpm-mutagen)
 
 
 # Grab OS type
