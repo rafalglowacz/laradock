@@ -4,7 +4,7 @@
 
 
 # Grab full name of php-fpm container
-PHP_FPM_CONTAINER=$(docker-compose ps -q php-fpm) || PHP_FPM_CONTAINER=$(docker-compose ps -q php-fpm-mutagen)
+PHP_FPM_CONTAINER=$(docker compose ps -q php-fpm) || PHP_FPM_CONTAINER=$(docker compose ps -q php-fpm-mutagen)
 
 
 # Grab OS type
@@ -68,12 +68,12 @@ xdebug_stop ()
         # Thanks to @michaelarnauts at https://github.com/docker/compose/issues/593
         winpty docker exec -it $PHP_FPM_CONTAINER bash -c "${OFF_CMD}"
         docker restart $PHP_FPM_CONTAINER
-        #docker-compose restart php-fpm
+        #docker compose restart php-fpm
         winpty docker exec -it $PHP_FPM_CONTAINER bash -c 'php -v'
 
     else
         docker exec -it $PHP_FPM_CONTAINER bash -c "${OFF_CMD}"
-        # docker-compose restart php-fpm
+        # docker compose restart php-fpm
         docker restart $PHP_FPM_CONTAINER
         docker exec -it $PHP_FPM_CONTAINER bash -c 'php -v'
     fi

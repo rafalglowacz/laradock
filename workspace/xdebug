@@ -4,7 +4,7 @@
 
 
 # Grab full name of the container
-CONTAINER=$(docker-compose ps -q workspace) || CONTAINER=$(docker-compose ps -q workspace-mutagen)
+CONTAINER=$(docker compose ps -q workspace) || CONTAINER=$(docker compose ps -q workspace-mutagen)
 
 # Grab PHP major and minor version, e.g. 7.4
 PHP_VERSION=$(docker exec $CONTAINER php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;')
@@ -70,12 +70,12 @@ xdebug_stop ()
         # Thanks to @michaelarnauts at https://github.com/docker/compose/issues/593
         winpty docker exec -it $CONTAINER bash -c "${OFF_CMD}"
         docker restart $CONTAINER
-        #docker-compose restart workspace
+        #docker compose restart workspace
         winpty docker exec -it $CONTAINER bash -c 'php -v'
 
     else
         docker exec -it $CONTAINER bash -c "${OFF_CMD}"
-        # docker-compose restart workspace
+        # docker compose restart workspace
         docker restart $CONTAINER
         docker exec -it $CONTAINER bash -c 'php -v'
     fi
